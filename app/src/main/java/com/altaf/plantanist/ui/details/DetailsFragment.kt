@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import ApiConfig
 import com.altaf.plantanist.databinding.FragmentDetailsBinding
 import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
 
 class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
@@ -43,9 +44,26 @@ class DetailsFragment : Fragment() {
                 if (response.isSuccessful) {
                     response.body()?.let { plantResponse ->
                         binding.apply {
+                            // Always show the plant details
                             plantName.text = plantResponse.plant
                             diseaseName.text = plantResponse.disease
                             plantDetails.text = plantResponse.details
+
+                            // Set confidence message based on level
+                            when {
+                                plantResponse.confidence < 0.4f -> {
+                                    confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
+                                    confidenceText.text = "Low confidence result. Consider rescanning with better lighting and focus for more accurate results."
+                                }
+                                plantResponse.confidence < 0.7f -> {
+                                    confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark))
+                                    confidenceText.text = "Medium confidence result. Results might not be fully accurate."
+                                }
+                                else -> {
+                                    confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark))
+                                    confidenceText.text = "High confidence result"
+                                }
+                            }
                         }
                     }
                 }
