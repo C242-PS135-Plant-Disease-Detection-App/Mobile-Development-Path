@@ -9,7 +9,21 @@
         android:id="@+id/navigation_scan"
         android:name="com.altaf.plantanist.ui.scan.ScanFragment"
         android:label="@string/title_scan"
-        tools:layout="@layout/fragment_scan" />
+        tools:layout="@layout/fragment_scan">
+        <action
+            android:id="@+id/action_navigation_scan_to_details"
+            app:destination="@id/navigation_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_details"
+        android:name="com.altaf.plantanist.ui.details.DetailsFragment"
+        android:label="Plant Details"
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="imageUri"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_history"
