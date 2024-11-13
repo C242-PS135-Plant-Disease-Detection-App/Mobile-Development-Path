@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -22,9 +22,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        navController = navHostFragment.navController
 
-        navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val navView: BottomNavigationView = binding.navView
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_scan, R.id.navigation_history, R.id.navigation_settings
@@ -33,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Hide bottom navigation on details screen
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_details) {
                 binding.navView.visibility = View.GONE
