@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -14,7 +15,9 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.altaf.plantanist.R
 import com.altaf.plantanist.databinding.FragmentScanBinding
@@ -30,6 +33,7 @@ class ScanFragment : Fragment() {
     
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
+    private val viewModel: ScanViewModel by viewModels()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -128,10 +132,23 @@ class ScanFragment : Fragment() {
     }
 
     private fun navigateToDetails(imageUri: String) {
-        val bundle = Bundle().apply {
-            putString("imageUri", imageUri)
+        viewModel.scanPlant(imageUri)
+        
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.isVisible = isLoading
         }
-        findNavController().navigate(R.id.action_navigation_scan_to_details, bundle)
+        
+        viewModel.scanResult.observe(viewLifecycleOwner) { result ->
+            val bundle = Bundle().apply {
+                putString("imageUri", imageUri)
+                putParcelable("scanResult", result)
+            }
+            findNavController().navigate(R.id.action_navigation_scan_to_details, bundle)
+        }
+        
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun allPermissionsGranted() = ContextCompat.checkSelfPermission(

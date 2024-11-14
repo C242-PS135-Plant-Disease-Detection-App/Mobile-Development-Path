@@ -12,6 +12,7 @@ import ApiConfig
 import com.altaf.plantanist.databinding.FragmentDetailsBinding
 import kotlinx.coroutines.launch
 import androidx.core.content.ContextCompat
+import com.altaf.plantanist.data.PlantResponse
 
 class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
@@ -29,48 +30,39 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        arguments?.getString("imageUri")?.let { uri ->
-            binding.plantImage.setImageURI(Uri.parse(uri))
-            getPlantDetails()
-        }
+        displayPlantDetails()
     }
 
-    private fun getPlantDetails() {
-        binding.progressBar.isVisible = true
-        
-        lifecycleScope.launch {
-            try {
-                val response = ApiConfig.getApiService().scanPlant()
-                if (response.isSuccessful) {
-                    response.body()?.let { plantResponse ->
-                        binding.apply {
-                            // Always show the plant details
-                            plantName.text = plantResponse.plant
-                            diseaseName.text = plantResponse.disease
-                            plantDetails.text = plantResponse.details
-
-                            // Set confidence message based on level
-                            when {
-                                plantResponse.confidence < 0.4f -> {
-                                    confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
-                                    confidenceText.text = "Low confidence result. Consider rescanning with better lighting and focus for more accurate results."
-                                }
-                                plantResponse.confidence < 0.7f -> {
-                                    confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark))
-                                    confidenceText.text = "Medium confidence result. Results might not be fully accurate."
-                                }
-                                else -> {
-                                    confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark))
-                                    confidenceText.text = "High confidence result"
-                                }
-                            }
+    private fun displayPlantDetails() {
+        arguments?.let { args ->
+            val imageUri = args.getString("imageUri")
+            val scanResult = args.getParcelable("scanResult", PlantResponse::class.java)
+            
+            imageUri?.let { uri ->
+                binding.plantImage.setImageURI(Uri.parse(uri))
+            }
+            
+            scanResult?.let { result ->
+                binding.apply {
+                    plantName.text = result.plant
+                    diseaseName.text = result.disease
+                    plantDetails.text = result.details
+                    
+                    when {
+                        result.confidence < 0.4f -> {
+                            confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
+                            confidenceText.text = "Low confidence result. Consider rescanning with better lighting and focus for more accurate results."
+                        }
+                        result.confidence < 0.7f -> {
+                            confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_orange_dark))
+                            confidenceText.text = "Medium confidence result. Results might not be fully accurate."
+                        }
+                        else -> {
+                            confidenceText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark))
+                            confidenceText.text = "High confidence result"
                         }
                     }
                 }
-            } catch (e: Exception) {
-                // Handle error
-            } finally {
-                binding.progressBar.isVisible = false
             }
         }
     }

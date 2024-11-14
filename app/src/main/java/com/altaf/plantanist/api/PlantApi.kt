@@ -1,4 +1,4 @@
-import PlantResponse
+import com.altaf.plantanist.data.PlantResponse
 import retrofit2.Response
 import retrofit2.http.GET
 
