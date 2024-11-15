@@ -4,35 +4,37 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.altaf.plantanist.databinding.FragmentHistoryBinding
+import com.altaf.plantanist.data.HistoryEntity
 
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var historyViewModel: HistoryViewModel
+    private lateinit var historyAdapter: HistoryAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HistoryViewModel::class.java)
-
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
-        val textView: TextView = binding.textHistory
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        // Setup RecyclerView
+        binding.recyclerViewHistory.layoutManager = LinearLayoutManager(context)
+        historyAdapter = HistoryAdapter()
+        binding.recyclerViewHistory.adapter = historyAdapter
+
+        // Observe history data
+        historyViewModel.allHistory.observe(viewLifecycleOwner) { historyList ->
+            historyAdapter.submitList(historyList)
         }
-        return root
+
+        return binding.root
     }
 
     override fun onDestroyView() {

@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.altaf.plantanist.data.HistoryDao
+import com.altaf.plantanist.data.HistoryEntity
 import com.altaf.plantanist.data.PlantResponse
-import ApiConfig
 import kotlinx.coroutines.launch
 
-class ScanViewModel : ViewModel() {
+class ScanViewModel(private val historyDao: HistoryDao) : ViewModel() {
     private val _scanResult = MutableLiveData<PlantResponse>()
     val scanResult: LiveData<PlantResponse> = _scanResult
 
@@ -24,7 +25,17 @@ class ScanViewModel : ViewModel() {
             try {
                 val response = ApiConfig.getApiService().scanPlant()
                 if (response.isSuccessful) {
-                    _scanResult.value = response.body()
+                    response.body()?.let { result ->
+                        _scanResult.value = result
+                        // Save result to history with imageUri
+                        val history = HistoryEntity(
+                            gambar = imageUri,  // Save the image URI here
+                            plant = result.plant,
+                            disease = result.disease,
+                            details = result.details
+                        )
+                        historyDao.insertHistory(history)
+                    }
                 } else {
                     _error.value = "Failed to scan plant"
                 }

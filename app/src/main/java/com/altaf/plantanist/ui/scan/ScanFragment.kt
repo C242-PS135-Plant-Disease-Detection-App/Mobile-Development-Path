@@ -19,6 +19,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.altaf.plantanist.PlantApplication
 import com.altaf.plantanist.R
 import com.altaf.plantanist.databinding.FragmentScanBinding
 import java.io.File
@@ -30,10 +31,14 @@ import java.util.concurrent.Executors
 class ScanFragment : Fragment() {
     private var _binding: FragmentScanBinding? = null
     private val binding get() = _binding!!
-    
+
+    // Initialize ScanViewModel using the custom factory with historyDao
+    private val viewModel: ScanViewModel by viewModels {
+        ScanViewModelFactory((requireActivity().application as PlantApplication).database.historyDao())
+    }
+
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
-    private val viewModel: ScanViewModel by viewModels()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -69,24 +74,17 @@ class ScanFragment : Fragment() {
 
         binding.cameraCaptureButton.setOnClickListener { takePhoto() }
         binding.galleryButton.setOnClickListener { openGallery() }
-
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                }
-
+            val preview = Preview.Builder().build().also {
+                it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+            }
             imageCapture = ImageCapture.Builder().build()
-
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
@@ -103,7 +101,6 @@ class ScanFragment : Fragment() {
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
-
         val photoFile = File(
             requireContext().externalCacheDir,
             SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
@@ -111,13 +108,13 @@ class ScanFragment : Fragment() {
         )
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    navigateToDetails(Uri.fromFile(photoFile).toString())
+                    val imageUri = Uri.fromFile(photoFile).toString() // Get the URI here
+                    navigateToDetails(imageUri) // Pass the URI to the next fragment
                 }
 
                 override fun onError(exc: ImageCaptureException) {
@@ -133,11 +130,11 @@ class ScanFragment : Fragment() {
 
     private fun navigateToDetails(imageUri: String) {
         viewModel.scanPlant(imageUri)
-        
+
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.isVisible = isLoading
         }
-        
+
         viewModel.scanResult.observe(viewLifecycleOwner) { result ->
             val bundle = Bundle().apply {
                 putString("imageUri", imageUri)
@@ -145,14 +142,15 @@ class ScanFragment : Fragment() {
             }
             findNavController().navigate(R.id.action_navigation_scan_to_details, bundle)
         }
-        
+
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
         }
     }
 
     private fun allPermissionsGranted() = ContextCompat.checkSelfPermission(
-        requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        requireContext(), Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
 
     override fun onDestroyView() {
         super.onDestroyView()

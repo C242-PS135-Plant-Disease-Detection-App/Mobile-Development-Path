@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.history.HistoryFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"/>
+
     <TextView
         android:id="@+id/text_history"
         android:layout_width="match_parent"

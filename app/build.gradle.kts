@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id ("com.google.devtools.ksp") version ("1.9.0-1.0.13")
 }
 
 android {
@@ -52,6 +53,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //Room
+    implementation ("androidx.room:room-runtime:2.5.2")
+    implementation ("androidx.room:room-ktx:2.5.2")
+    ksp ("androidx.room:room-compiler:2.5.2")
 
     // CameraX
     implementation("androidx.camera:camera-core:1.3.2")
