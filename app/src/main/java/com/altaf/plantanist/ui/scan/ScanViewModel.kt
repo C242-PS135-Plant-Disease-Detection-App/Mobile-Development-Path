@@ -46,4 +46,8 @@ class ScanViewModel(private val historyDao: HistoryDao) : ViewModel() {
             }
         }
     }
+
+    fun resetScanResult() {
+        _scanResult.value = null
+    }
 }

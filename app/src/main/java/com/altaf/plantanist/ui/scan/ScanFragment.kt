@@ -129,6 +129,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun navigateToDetails(imageUri: String) {
+        viewModel.resetScanResult() // Reset the scan result before starting a new scan
         viewModel.scanPlant(imageUri)
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
