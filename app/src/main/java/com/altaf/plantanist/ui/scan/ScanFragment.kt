@@ -137,11 +137,13 @@ class ScanFragment : Fragment() {
         }
 
         viewModel.scanResult.observe(viewLifecycleOwner) { result ->
-            val bundle = Bundle().apply {
-                putString("imageUri", imageUri)
-                putParcelable("scanResult", result)
+            result?.let {
+                val bundle = Bundle().apply {
+                    putString("imageUri", imageUri)
+                    putParcelable("scanResult", result)
+                }
+                findNavController().navigate(R.id.action_navigation_scan_to_details, bundle)
             }
-            findNavController().navigate(R.id.action_navigation_scan_to_details, bundle)
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
