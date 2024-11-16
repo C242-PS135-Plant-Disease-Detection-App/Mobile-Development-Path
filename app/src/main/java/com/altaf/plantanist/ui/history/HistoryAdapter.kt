@@ -10,7 +10,7 @@ import com.altaf.plantanist.data.HistoryEntity
 import com.altaf.plantanist.databinding.ItemHistoryBinding
 import com.bumptech.glide.Glide
 
-class HistoryAdapter : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHolder>(HistoryDiffCallback()) {
+class HistoryAdapter(private val onItemClick: (HistoryEntity) -> Unit) : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHolder>(HistoryDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val binding = ItemHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -20,6 +20,7 @@ class HistoryAdapter : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHold
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val history = getItem(position)
         holder.bind(history)
+        holder.itemView.setOnClickListener { onItemClick(history) }
     }
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {

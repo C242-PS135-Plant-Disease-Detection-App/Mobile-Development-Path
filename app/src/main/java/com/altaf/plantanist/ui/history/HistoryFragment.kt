@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.altaf.plantanist.R
 import com.altaf.plantanist.databinding.FragmentHistoryBinding
+import com.altaf.plantanist.data.PlantResponse
 
 class HistoryFragment : Fragment() {
 
@@ -23,8 +26,14 @@ class HistoryFragment : Fragment() {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
-        // Setup RecyclerView
-        historyAdapter = HistoryAdapter()
+        // Setup RecyclerView with click listener
+        historyAdapter = HistoryAdapter { historyEntity ->
+            val bundle = Bundle().apply {
+                putString("imageUri", historyEntity.image)
+                putParcelable("scanResult", PlantResponse(historyEntity.plant, historyEntity.disease, historyEntity.details, 1.0f)) // Assuming confidence is 1.0f for history
+            }
+            findNavController().navigate(R.id.action_navigation_history_to_details, bundle)
+        }
         binding.recyclerViewHistory.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewHistory.adapter = historyAdapter
 
