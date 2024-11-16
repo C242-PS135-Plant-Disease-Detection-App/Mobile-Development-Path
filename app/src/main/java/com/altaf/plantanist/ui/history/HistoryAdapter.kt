@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.altaf.plantanist.R
 import com.altaf.plantanist.data.HistoryEntity
 import com.altaf.plantanist.databinding.ItemHistoryBinding
+import com.bumptech.glide.Glide
 
 class HistoryAdapter : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHolder>(HistoryDiffCallback()) {
 
@@ -21,11 +23,16 @@ class HistoryAdapter : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHold
     }
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
-
         fun bind(history: HistoryEntity) {
+            // Set teks
             binding.textPlant.text = history.plant
             binding.textDisease.text = history.disease
             binding.textDetails.text = history.details
+
+            // Load gambar menggunakan Glide
+            Glide.with(binding.root.context)
+                .load(history.gambar) // URI atau path gambar
+                .into(binding.imageGambar) // Masukkan ke ImageView
         }
     }
 
@@ -39,3 +46,4 @@ class HistoryAdapter : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHold
         }
     }
 }
+

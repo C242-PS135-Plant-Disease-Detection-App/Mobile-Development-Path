@@ -18,30 +18,5 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
 
     val allHistory: LiveData<List<HistoryEntity>> = repository.allHistory.asLiveData()
 
-    // Fungsi untuk memanggil API dan menyimpan hasilnya
-    fun scanAndSavePlant() {
-        viewModelScope.launch {
-            try {
-                val response = apiService.scanPlant()
-                if (response.isSuccessful) {
-                    response.body()?.let { plantResponse ->
-                        val history = HistoryEntity(
-                            gambar = "path_or_uri", // Ganti dengan URI atau path gambar yang sesuai
-                            plant = plantResponse.plant,
-                            disease = plantResponse.disease,
-                            details = plantResponse.details
-                        )
-                        repository.insert(history)
-                    }
-                }
-            } catch (e: Exception) {
-                // Tangani error sesuai kebutuhan, misalnya dengan log atau notifikasi
-            }
-        }
-    }
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is history Fragment"
-    }
-    val text: LiveData<String> = _text
 }
