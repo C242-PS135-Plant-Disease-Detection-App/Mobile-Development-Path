@@ -24,21 +24,20 @@ class HistoryAdapter : ListAdapter<HistoryEntity, HistoryAdapter.HistoryViewHold
 
     inner class HistoryViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(history: HistoryEntity) {
-            // Set teks
             binding.textPlant.text = history.plant
             binding.textDisease.text = history.disease
             binding.textDetails.text = history.details
 
-            // Load gambar menggunakan Glide
+            // Load image using Glide
             Glide.with(binding.root.context)
-                .load(history.gambar) // URI atau path gambar
-                .into(binding.imageGambar) // Masukkan ke ImageView
+                .load(history.image)
+                .into(binding.imageImage)
         }
     }
 
     class HistoryDiffCallback : DiffUtil.ItemCallback<HistoryEntity>() {
         override fun areItemsTheSame(oldItem: HistoryEntity, newItem: HistoryEntity): Boolean {
-            return oldItem.id == newItem.id // Assuming HistoryEntity has a unique id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: HistoryEntity, newItem: HistoryEntity): Boolean {

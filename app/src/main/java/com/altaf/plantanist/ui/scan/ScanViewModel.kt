@@ -29,7 +29,7 @@ class ScanViewModel(private val historyDao: HistoryDao) : ViewModel() {
                         _scanResult.value = result
                         // Save result to history with imageUri
                         val history = HistoryEntity(
-                            gambar = imageUri,  // Save the image URI here
+                            image = imageUri,
                             plant = result.plant,
                             disease = result.disease,
                             details = result.details

@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.altaf.plantanist.databinding.FragmentHistoryBinding
-import com.altaf.plantanist.data.HistoryEntity
 
 class HistoryFragment : Fragment() {
 
@@ -25,8 +24,8 @@ class HistoryFragment : Fragment() {
         historyViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
         // Setup RecyclerView
-        binding.recyclerViewHistory.layoutManager = LinearLayoutManager(context)
         historyAdapter = HistoryAdapter()
+        binding.recyclerViewHistory.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewHistory.adapter = historyAdapter
 
         // Observe history data
