@@ -12,6 +12,7 @@ import com.altaf.plantanist.data.AuthenticationDatabase
 import com.altaf.plantanist.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
+import androidx.activity.OnBackPressedCallback
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,6 +57,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val navController = findNavController(R.id.nav_host_fragment_activity_main)
+                if (navController.currentDestination?.id == R.id.navigation_scan) {
+                    finish() // Exit the app if on ScanFragment
+                } else {
+                    navController.navigateUp() // Navigate back for other fragments
+                }
+            }
+        })
 
         // Check for existing token
         lifecycleScope.launch {
