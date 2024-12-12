@@ -7,16 +7,24 @@
     tools:context=".ui.settings.SettingsFragment">
 
     <TextView
-        android:id="@+id/text_settings"
-        android:layout_width="match_parent"
+        android:id="@+id/text_logged_in_as"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="18sp"
+        android:text="Logged in as:\n"
+        android:maxLines="2"
+        android:ellipsize="end"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_logout"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_logout"
+        app:layout_constraintStart_toEndOf="@id/text_logged_in_as"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_logged_in_as" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

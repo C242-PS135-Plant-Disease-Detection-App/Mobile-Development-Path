@@ -6,4 +6,5 @@
     <string name="title_login">Login</string>
     <string name="default_web_client_id">656338336155-9jlh5ehtviqdg9a9396tf9ielaoskb90.apps.googleusercontent.com</string>
     <string name="text_login">Welcome to Plantanist</string>
+    <string name="title_logout">Logout</string>
 </resources>

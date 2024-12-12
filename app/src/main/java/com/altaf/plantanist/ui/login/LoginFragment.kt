@@ -19,6 +19,7 @@ import com.google.android.gms.common.SignInButton
 import com.altaf.plantanist.R
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.altaf.plantanist.data.AuthenticationDatabase
 
 class LoginFragment : Fragment() {
 
@@ -31,7 +32,13 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
-        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+
+        // Get the AuthenticationDatabase instance
+        val database = AuthenticationDatabase.getDatabase(requireContext())
+        
+        // Use the factory to create the ViewModel
+        val factory = LoginViewModelFactory(database)
+        viewModel = ViewModelProvider(this, factory).get(LoginViewModel::class.java)
 
         val signInButton: SignInButton = view.findViewById(R.id.button_sign_in)
         signInButton.setSize(SignInButton.SIZE_WIDE)
