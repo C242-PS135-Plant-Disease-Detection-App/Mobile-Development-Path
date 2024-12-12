@@ -5,9 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class ScanViewModel : ViewModel() {
+    private val _imageUri = MutableLiveData<String>()
+    val imageUri: LiveData<String> get() = _imageUri
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is scan Fragment"
+    fun setImageUri(uri: String) {
+        _imageUri.value = uri
     }
-    val text: LiveData<String> = _text
 }
