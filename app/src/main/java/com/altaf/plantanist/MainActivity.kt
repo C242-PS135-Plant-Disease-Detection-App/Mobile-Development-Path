@@ -44,6 +44,12 @@ class MainActivity : AppCompatActivity() {
                     navView.visibility = View.GONE
                     supportActionBar?.hide()
                 }
+
+                R.id.navigation_detail -> {
+                    navView.visibility = View.GONE
+                    supportActionBar?.show()
+                }
+
                 else -> {
                     navView.visibility = View.VISIBLE
                     supportActionBar?.show()

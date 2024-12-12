@@ -19,6 +19,15 @@
         android:name="com.altaf.plantanist.ui.scan.ScanFragment"
         android:label="@string/title_scan"
         tools:layout="@layout/fragment_scan" />
+        <action
+            android:id="@+id/action_navigation_scan_to_navigation_detail"
+            app:destination="@id/navigation_detail" />
+
+    <fragment
+        android:id="@+id/navigation_detail"
+        android:name="com.altaf.plantanist.ui.detail.DetailFragment"
+        android:label="@string/title_detail"
+        tools:layout="@layout/fragment_detail" />
 
     <fragment
         android:id="@+id/navigation_history"

@@ -18,7 +18,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.altaf.plantanist.R
 import com.altaf.plantanist.databinding.FragmentScanBinding
 import java.io.File
 
@@ -28,7 +29,6 @@ class ScanFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var imageCapture: ImageCapture
-    private lateinit var viewModel: ScanViewModel
 
     companion object {
         private const val GALLERY_REQUEST_CODE = 1001
@@ -37,9 +37,12 @@ class ScanFragment : Fragment() {
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                viewModel.setImageUri(it.toString())
-                Toast.makeText(requireContext(), "Image selected: $uri", Toast.LENGTH_SHORT).show()
-                // Handle the selected image URI
+                // Create a Bundle to pass the image URI
+                val bundle = Bundle().apply {
+                    putString("imageUri", it.toString())
+                }
+                // Navigate to DetailFragment with the Bundle
+                findNavController().navigate(R.id.navigation_detail, bundle)
             }
         }
 
@@ -62,7 +65,7 @@ class ScanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(ScanViewModel::class.java)
+        val root: View = binding.root
 
         binding.galleryButton.setOnClickListener {
             openGallery()
@@ -72,7 +75,7 @@ class ScanFragment : Fragment() {
             captureImage()
         }
 
-        return binding.root
+        return root
     }
 
     override fun onStart() {
@@ -110,7 +113,9 @@ class ScanFragment : Fragment() {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error starting camera: ${e.message}", Toast.LENGTH_SHORT).show()
+                e.message?.let {
+                    Toast.makeText(requireContext(), "Error starting camera: $it", Toast.LENGTH_SHORT).show()
+                }
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
@@ -124,8 +129,12 @@ class ScanFragment : Fragment() {
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    Toast.makeText(requireContext(), "Image saved: ${photoFile.absolutePath}", Toast.LENGTH_SHORT).show()
-                    viewModel.setImageUri(photoFile.absolutePath) // Save the image URI in ViewModel
+                    // Create a Bundle to pass the image URI
+                    val bundle = Bundle().apply {
+                        putString("imageUri", photoFile.toURI().toString())
+                    }
+                    // Navigate to DetailFragment with the Bundle
+                    findNavController().navigate(R.id.navigation_detail, bundle)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
