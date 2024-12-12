@@ -3,4 +3,7 @@
     <string name="title_scan">Scan</string>
     <string name="title_history">History</string>
     <string name="title_settings">Settings</string>
+    <string name="title_login">Login</string>
+    <string name="default_web_client_id">656338336155-9jlh5ehtviqdg9a9396tf9ielaoskb90.apps.googleusercontent.com</string>
+    <string name="text_login">Welcome to Plantanist</string>
 </resources>

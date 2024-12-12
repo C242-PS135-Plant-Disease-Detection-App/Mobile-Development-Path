@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "656338336155",
+    "project_id": "capstonebangkit-plantanist",
+    "storage_bucket": "capstonebangkit-plantanist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656338336155:android:9602ff230b8c01a761893e",
+        "android_client_info": {
+          "package_name": "com.altaf.plantanist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656338336155-5eivm85j7ocu3ksgppmk38ksir11mv0t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.altaf.plantanist",
+            "certificate_hash": "6fe6d7fd375f7612d5fc7b38781071e5ed0ba39c"
+          }
+        },
+        {
+          "client_id": "656338336155-9jlh5ehtviqdg9a9396tf9ielaoskb90.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuDRz02ZQOcpNs9M343HgtNc6Z58K7hAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "656338336155-9jlh5ehtviqdg9a9396tf9ielaoskb90.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
