@@ -20,7 +20,15 @@ class LoginViewModel(private val database: AuthenticationDatabase) : ViewModel()
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     user?.let {
-                        saveToken(idToken, it.displayName ?: "", it.email ?: "") // Save token, name, and email
+                        // Obtain Firebase ID token
+                        it.getIdToken(false).addOnCompleteListener { tokenTask ->
+                            if (tokenTask.isSuccessful) {
+                                val firebaseIdToken = tokenTask.result?.token
+                                firebaseIdToken?.let { token ->
+                                    saveToken(token, it.displayName ?: "", it.email ?: "") // Save token, name, and email
+                                }
+                            }
+                        }
                     }
                 }
                 onComplete(task.isSuccessful)
