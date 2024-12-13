@@ -1,9 +1,10 @@
 package com.altaf.plantanist
-
+import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.Gravity
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -11,8 +12,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.altaf.plantanist.data.AuthenticationDatabase
 import com.altaf.plantanist.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
-import androidx.activity.OnBackPressedCallback
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.core.content.ContextCompat
+import android.graphics.drawable.ColorDrawable
+import android.view.View
+import com.altaf.plantanist.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,6 +55,11 @@ class MainActivity : AppCompatActivity() {
                     supportActionBar?.show()
                 }
 
+                R.id.welcomePagerFragment -> {
+                    navView.visibility = View.GONE
+                    supportActionBar?.hide()
+                }
+
                 else -> {
                     navView.visibility = View.VISIBLE
                     supportActionBar?.show()
@@ -77,6 +86,17 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.navigation_scan)
             }
         }
+
+        // Setel warna hijau untuk app bar
+        supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(this, R.color.green3)))
+
+        // Menambahkan TextView untuk judul dan memposisikannya di tengah
+        val titleTextView = TextView(this)
+        titleTextView.text = supportActionBar?.title
+        titleTextView.setTextColor(Color.WHITE) // Set warna teks menjadi putih
+        titleTextView.gravity = Gravity.CENTER // Set posisi teks ke tengah
+
+        supportActionBar?.customView = titleTextView
     }
 
     override fun onSupportNavigateUp(): Boolean {

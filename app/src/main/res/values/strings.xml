@@ -12,4 +12,7 @@
     <string name="text_plant">Plant</string>
     <string name="text_disease">Disease</string>
     <string name="text_description">Description</string>
+    <string name="scan_image">Scan</string>
+    <string name="gallery">Gallery</string>
+    <string name="capture">Capture</string>
 </resources>

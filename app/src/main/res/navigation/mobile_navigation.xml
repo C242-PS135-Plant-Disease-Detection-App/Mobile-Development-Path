@@ -1,9 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_login">
+    app:startDestination="@+id/welcomePagerFragment">
+
+    <!-- Fragment untuk ViewPager2 -->
+    <fragment
+        android:id="@+id/welcomePagerFragment"
+        android:name="com.altaf.plantanist.ui.welcome.WelcomePagerFragment"
+        android:label="Welcome Pager"
+        tools:layout="@layout/welcome_viewpager">
+
+        <!-- Navigasi ke LoginPagerFragment -->
+        <action
+            android:id="@+id/action_navigation_welcome_to_login_pager"
+            app:destination="@id/navigation_login" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_login"

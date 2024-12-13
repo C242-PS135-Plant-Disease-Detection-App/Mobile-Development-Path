@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Dekorasi sudut atas kanan -->
+    <ImageView
+        android:id="@+id/topRightDecoration"
+        android:layout_width="116dp"
+        android:layout_height="142dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="4dp"
+        android:contentDescription="Top Right Decoration"
+        android:src="@drawable/plant_asset_4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/bottomLeftDecoration"
+        android:layout_width="110dp"
+        android:layout_height="246dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp"
+        android:contentDescription="Bottom Left Decoration"
+        android:src="@drawable/plant_asset_3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

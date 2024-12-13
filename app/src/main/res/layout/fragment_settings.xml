@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
+
+    <include
+        android:id="@+id/plantDecoration1"
+        layout="@layout/decoration_2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/text_logged_in_as"
         android:layout_width="0dp"

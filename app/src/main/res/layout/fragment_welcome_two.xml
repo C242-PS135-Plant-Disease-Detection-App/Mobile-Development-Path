@@ -1,0 +1,87 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F9FB"
+    tools:context=".ui.welcome.WelcomeFragmentTwo">
+
+    <!-- Include dekorasi -->
+    <include
+        layout="@layout/decoration_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Kontainer Tengah -->
+    <LinearLayout
+        android:id="@+id/centerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.453">
+
+        <ImageView
+            android:id="@+id/ivIllustration"
+            android:layout_width="218dp"
+            android:layout_height="203dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/plant_asset_5" />
+
+        <!-- fragment_welcome_two.xml -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Selamat datang di Plantanist!"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Kami senang bisa membantu kamu menjaga tanaman tetap sehat."
+            android:textColor="?android:textColorPrimary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- Indikator ViewPager -->
+    <LinearLayout
+        android:id="@+id/viewPagerIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/ic_dot_inactive" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/ic_dot_active" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
