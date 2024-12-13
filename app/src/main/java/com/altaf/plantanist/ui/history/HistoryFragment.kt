@@ -1,38 +1,55 @@
+// HistoryFragment.kt
 package com.altaf.plantanist.ui.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.altaf.plantanist.api.ApiConfig
+import com.altaf.plantanist.api.Prediction
+import com.altaf.plantanist.data.AuthenticationDatabase
 import com.altaf.plantanist.databinding.FragmentHistoryBinding
+import kotlinx.coroutines.launch
 
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val historyViewModel =
-            ViewModelProvider(this).get(HistoryViewModel::class.java)
-
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        val textView: TextView = binding.textHistory
-        historyViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fetchHistory()
+    }
+
+    private fun fetchHistory() {
+        lifecycleScope.launch {
+            val token = AuthenticationDatabase.getDatabase(requireContext()).tokenDao().getToken()?.token ?: return@launch
+            val response = ApiConfig.getApiService().getHistory(token)
+            if (response.isSuccessful) {
+                val predictions = response.body()?.predictions ?: emptyList()
+                setupRecyclerView(predictions)
+            } else {
+                Toast.makeText(requireContext(), "Error fetching history: ${response.message()}", Toast.LENGTH_SHORT).show()
+            }
         }
-        return root
+    }
+
+    private fun setupRecyclerView(predictions: List<Prediction>) {
+        val adapter = HistoryAdapter(predictions)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
     }
 
     override fun onDestroyView() {
