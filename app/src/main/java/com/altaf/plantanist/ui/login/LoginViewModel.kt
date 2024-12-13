@@ -20,12 +20,11 @@ class LoginViewModel(private val database: AuthenticationDatabase) : ViewModel()
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     user?.let {
-                        // Obtain Firebase ID token
                         it.getIdToken(false).addOnCompleteListener { tokenTask ->
                             if (tokenTask.isSuccessful) {
                                 val firebaseIdToken = tokenTask.result?.token
                                 firebaseIdToken?.let { token ->
-                                    saveToken(token, it.displayName ?: "", it.email ?: "") // Save token, name, and email
+                                    saveToken(token, it.displayName ?: "", it.email ?: "")
                                 }
                             }
                         }
@@ -40,14 +39,19 @@ class LoginViewModel(private val database: AuthenticationDatabase) : ViewModel()
             database.tokenDao().insert(Authentication(token = token, name = name, email = email))
         }
     }
-}
 
-class LoginViewModelFactory(private val database: AuthenticationDatabase) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return LoginViewModel(database) as T
+    fun refreshToken(onComplete: (String?) -> Unit) {
+        val user = auth.currentUser
+        user?.getIdToken(true)?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val newToken = task.result?.token
+                newToken?.let {
+                    saveToken(it, user.displayName ?: "", user.email ?: "")
+                    onComplete(it)
+                } ?: onComplete(null)
+            } else {
+                onComplete(null)
+            }
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
