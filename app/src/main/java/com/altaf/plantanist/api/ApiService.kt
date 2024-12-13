@@ -13,5 +13,5 @@ interface ApiService {
     suspend fun predictPlant(
         @Header("token") token: String,
         @Part image: MultipartBody.Part
-    ): Response<ApiResponse>
+    ): Response<Prediction>
 }

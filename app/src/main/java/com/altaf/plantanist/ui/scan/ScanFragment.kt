@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.altaf.plantanist.R
 import com.altaf.plantanist.api.ApiConfig
+import com.altaf.plantanist.api.Prediction
 import com.altaf.plantanist.data.AuthenticationDatabase
 import com.altaf.plantanist.databinding.FragmentScanBinding
 import kotlinx.coroutines.launch
@@ -156,14 +157,14 @@ class ScanFragment : Fragment() {
             val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
             val response = ApiConfig.getApiService().predictPlant(token, body)
             if (response.isSuccessful) {
-                val apiResponse = response.body()
+                val prediction = response.body()
                 val bundle = Bundle().apply {
-                    putString("plant", apiResponse?.plant)
-                    putString("disease", apiResponse?.condition)
-                    putString("description", apiResponse?.description)
-                    putDouble("confidence_score", apiResponse?.confidence_score ?: 0.0)
-                    putString("date", apiResponse?.date)
-                    putString("image_url", apiResponse?.image_url)
+                    putString("plant", prediction?.plant)
+                    putString("condition", prediction?.condition)
+                    putString("description", prediction?.description)
+                    putDouble("confidence_score", prediction?.confidence_score ?: 0.0)
+                    putString("date", prediction?.date)
+                    putString("image_url", prediction?.image_url)
                 }
                 findNavController().navigate(R.id.navigation_detail, bundle)
             } else {

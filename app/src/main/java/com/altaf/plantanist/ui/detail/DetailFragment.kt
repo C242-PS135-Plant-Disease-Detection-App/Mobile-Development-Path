@@ -23,7 +23,7 @@ class DetailFragment : Fragment() {
         val root: View = binding.root
 
         val plant = arguments?.getString("plant")
-        val disease = arguments?.getString("disease")
+        val disease = arguments?.getString("condition")
         val description = arguments?.getString("description")
         val confidenceScore = arguments?.getDouble("confidence_score")
         val imageUrl = arguments?.getString("image_url")
