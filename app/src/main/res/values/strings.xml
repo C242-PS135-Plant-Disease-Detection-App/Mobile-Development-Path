@@ -8,4 +8,8 @@
     <string name="text_login">Welcome to Plantanist</string>
     <string name="title_logout">Logout</string>
     <string name="title_detail">Detail</string>
+    <string name="text_confidence">Confidence</string>
+    <string name="text_plant">Plant</string>
+    <string name="text_disease">Disease</string>
+    <string name="text_description">Description</string>
 </resources>

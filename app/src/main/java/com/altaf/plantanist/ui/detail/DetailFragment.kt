@@ -1,7 +1,8 @@
 package com.altaf.plantanist.ui.detail
 
-import android.net.Uri
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,14 +22,37 @@ class DetailFragment : Fragment() {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Get the image URI from arguments
-        val imageUri: String? = arguments?.getString("imageUri")
-        imageUri?.let {
-            // Load the image using Glide or any other image loading library
-            Glide.with(this)
-                .load(Uri.parse(it))
-                .into(binding.imageView)
+        val plant = arguments?.getString("plant")
+        val disease = arguments?.getString("disease")
+        val description = arguments?.getString("description")
+        val confidenceScore = arguments?.getDouble("confidence_score")
+        val imageUrl = arguments?.getString("image_url")
+
+        binding.plantTextView.text = plant
+        binding.diseaseTextView.text = disease
+        binding.descriptionTextView.text = description
+
+        val confidenceMessage = when {
+            confidenceScore != null && confidenceScore >= 90 -> {
+                binding.confidenceTextView.setTextColor(Color.GREEN)
+                "We are confident with this prediction"
+            }
+            confidenceScore != null && confidenceScore >= 70 -> {
+                binding.confidenceTextView.setTextColor(Color.YELLOW)
+                "We are less confident with this prediction"
+            }
+            else -> {
+                binding.confidenceTextView.setTextColor(Color.RED)
+                "We are not confident with this prediction"
+            }
         }
+        binding.confidenceTextView.text = confidenceMessage
+
+        // Display the image
+        Glide.with(this)
+            .load(imageUrl)
+            .centerCrop()
+            .into(binding.imageView)
 
         return root
     }

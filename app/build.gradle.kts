@@ -63,4 +63,7 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.glide)
     ksp(libs.compiler)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }

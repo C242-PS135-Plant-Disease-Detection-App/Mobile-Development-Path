@@ -1,11 +1,9 @@
 package com.altaf.plantanist.ui.scan
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,9 +16,17 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.altaf.plantanist.R
+import com.altaf.plantanist.api.ApiConfig
+import com.altaf.plantanist.data.AuthenticationDatabase
 import com.altaf.plantanist.databinding.FragmentScanBinding
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.File
 
 class ScanFragment : Fragment() {
@@ -29,6 +35,7 @@ class ScanFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var imageCapture: ImageCapture
+    private val scanViewModel: ScanViewModel by viewModels()
 
     companion object {
         private const val GALLERY_REQUEST_CODE = 1001
@@ -37,12 +44,7 @@ class ScanFragment : Fragment() {
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
-                // Create a Bundle to pass the image URI
-                val bundle = Bundle().apply {
-                    putString("imageUri", it.toString())
-                }
-                // Navigate to DetailFragment with the Bundle
-                findNavController().navigate(R.id.navigation_detail, bundle)
+                processImageUri(it)
             }
         }
 
@@ -129,12 +131,7 @@ class ScanFragment : Fragment() {
             ContextCompat.getMainExecutor(requireContext()),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    // Create a Bundle to pass the image URI
-                    val bundle = Bundle().apply {
-                        putString("imageUri", photoFile.toURI().toString())
-                    }
-                    // Navigate to DetailFragment with the Bundle
-                    findNavController().navigate(R.id.navigation_detail, bundle)
+                    processImageFile(photoFile)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -145,6 +142,34 @@ class ScanFragment : Fragment() {
 
     private fun openGallery() {
         galleryLauncher.launch("image/*")
+    }
+
+    private fun processImageUri(uri: Uri) {
+        val file = File(uri.path)
+        processImageFile(file)
+    }
+
+    private fun processImageFile(file: File) {
+        lifecycleScope.launch {
+            val token = AuthenticationDatabase.getDatabase(requireContext()).tokenDao().getToken()?.token ?: return@launch
+            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
+            val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+            val response = ApiConfig.getApiService().predictPlant(token, body)
+            if (response.isSuccessful) {
+                val apiResponse = response.body()
+                val bundle = Bundle().apply {
+                    putString("plant", apiResponse?.plant)
+                    putString("disease", apiResponse?.condition)
+                    putString("description", apiResponse?.description)
+                    putDouble("confidence_score", apiResponse?.confidence_score ?: 0.0)
+                    putString("date", apiResponse?.date)
+                    putString("image_url", apiResponse?.image_url)
+                }
+                findNavController().navigate(R.id.navigation_detail, bundle)
+            } else {
+                Toast.makeText(requireContext(), "Error predicting plant: ${response.message()}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroyView() {
