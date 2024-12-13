@@ -212,10 +212,12 @@ class ScanFragment : Fragment() {
 
     private fun processImageFile(file: File) {
         lifecycleScope.launch {
+            binding.progressBar.visibility = View.VISIBLE
             val token = AuthenticationDatabase.getDatabase(requireContext()).tokenDao().getToken()?.token ?: return@launch
             val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
             val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
             val response = ApiConfig.getApiService().predictPlant(token, body)
+            binding.progressBar.visibility = View.GONE
             if (response.isSuccessful) {
                 val prediction = response.body()
                 val bundle = Bundle().apply {
