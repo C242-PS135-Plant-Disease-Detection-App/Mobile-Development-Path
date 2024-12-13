@@ -1,9 +1,12 @@
 package com.altaf.plantanist.ui.scan
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +32,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 class ScanFragment : Fragment() {
 
@@ -62,16 +67,28 @@ class ScanFragment : Fragment() {
             }
         }
 
+    private val mediaPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                openGallery()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Media access permission is required to use this feature.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.galleryButton.setOnClickListener {
-            openGallery()
+            checkMediaPermission()
         }
 
         binding.cameraCaptureButton.setOnClickListener {
@@ -98,6 +115,14 @@ class ScanFragment : Fragment() {
             startCamera()
         } else {
             permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun checkMediaPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            openGallery()
+        } else {
+            mediaPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }
 
@@ -146,8 +171,43 @@ class ScanFragment : Fragment() {
     }
 
     private fun processImageUri(uri: Uri) {
-        val file = File(uri.path)
-        processImageFile(file)
+        val file = getFileFromUri(uri)
+        if (file != null) {
+            processImageFile(file)
+        } else {
+            Toast.makeText(requireContext(), "Error processing image", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getFileFromUri(uri: Uri): File? {
+        val contentResolver: ContentResolver = requireContext().contentResolver
+        val fileName = getFileName(uri)
+        val tempFile = File(requireContext().cacheDir, fileName)
+        tempFile.createNewFile()
+
+        try {
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(tempFile)
+            inputStream?.copyTo(outputStream)
+            inputStream?.close()
+            outputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+
+        return tempFile
+    }
+
+    private fun getFileName(uri: Uri): String {
+        var name = ""
+        val cursor: Cursor? = requireContext().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                name = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+            }
+        }
+        return name
     }
 
     private fun processImageFile(file: File) {
