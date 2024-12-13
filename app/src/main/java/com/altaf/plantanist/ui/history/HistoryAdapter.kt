@@ -2,10 +2,13 @@ package com.altaf.plantanist.ui.history
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.os.Bundle
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.altaf.plantanist.api.Prediction
 import com.altaf.plantanist.databinding.ItemHistoryBinding
 import com.bumptech.glide.Glide
+import com.altaf.plantanist.R
 
 class HistoryAdapter(private val predictions: List<Prediction>) :
     RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
@@ -19,6 +22,18 @@ class HistoryAdapter(private val predictions: List<Prediction>) :
                 .load(prediction.image_url)
                 .centerCrop()
                 .into(binding.imageView)
+
+            binding.root.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putString("plant", prediction.plant)
+                    putString("condition", prediction.condition)
+                    putString("description", prediction.description)
+                    putDouble("confidence_score", prediction.confidence_score)
+                    putString("date", prediction.date)
+                    putString("image_url", prediction.image_url)
+                }
+                it.findNavController().navigate(R.id.navigation_detail, bundle)
+            }
         }
     }
 
